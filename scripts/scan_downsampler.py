@@ -15,6 +15,7 @@ class ScanDownsampler:
         self.scale = rospy.get_param("~scale", default=0.3)
         rospy.Subscriber("/scan", LaserScan, self.callback)
         self.marker_pub = rospy.Publisher("~marker", Marker, queue_size=10, latch=True)
+        self.laser_pub = rospy.Publisher("~laser", LaserScan, queue_size=10, latch=True)
 
     def callback(self, data):
         marker = Marker()
@@ -40,7 +41,14 @@ class ScanDownsampler:
 
 
             angle += self.n * data.angle_increment
+            
+        data.ranges = list(data.ranges)
+        angle = 0
+        for i in range(0,len(data.ranges)):
+            if i % self.n != 0 or np.cos(angle) < 0:
+                data.ranges[i] = np.Infinity
 
+            angle += data.angle_increment
             
         marker.type = marker.POINTS
         marker.color.a = 1.0
@@ -49,6 +57,7 @@ class ScanDownsampler:
         marker.color.g = 0.0
 
         self.marker_pub.publish(marker)
+        self.laser_pub.publish(data)
     
  
 if __name__ == '__main__':
