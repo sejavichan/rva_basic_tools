@@ -1,0 +1,6 @@
+<launch>
+	<arg name="path_file" default="path"/>
+	<rosparam command="delete" param="/path" />
+	<rosparam command="load" file="$(find rva_basic_tools)/test/$(arg path_file).yaml" />
+	<node pkg="rva_basic_tools" type="pathPublisher.py" name="path_publisher" output="screen"/>
+</launch>

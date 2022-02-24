@@ -37,5 +37,5 @@ if __name__ == '__main__':
             
         seq = seq + 1
 
-        for i in range(50):
+        for i in range(5):
             rospy.sleep(1)
