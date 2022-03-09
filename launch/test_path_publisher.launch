@@ -5,10 +5,10 @@
 	<node pkg="rva_basic_tools" type="pathPublisher.py" name="path_publisher" output="screen"/>
 	<node pkg="rviz" type="rviz" name="rviz"/>
 	<node pkg="rva_basic_tools" type="controlGoal.py" name="control" output="screen">
-		<param name="max_linear_speed" value="0.6"/>
-		<!-- <param name="xgoal" value="0.0"/> -->
-		<!-- <param name="ygoal" value="0.0"/> -->
-		<param name="max_angular_speed" value="0.35"/>
-		<param name="distance_tolerance" value="0.05"/>
+		<param name="max_linear_speed" value="0.4"/>
+		<param name="min_linear_speed" value="0.2"/>
+		<param name="max_angular_speed" value="0.2"/>
+		<param name="goalx" value="5"/>
+		<param name="goaly" value="5"/>
 	</node>
 </launch>
