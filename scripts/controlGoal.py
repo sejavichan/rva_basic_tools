@@ -48,13 +48,12 @@ class Turtlebot():
         #goal.point.y = gy;
         goal.point.z = 0.0;
 
-        if (self.camino != None):
-            if( self.control < len(self.camino.poses)):
-                goal.point.x = self.camino.poses[self.control].pose.position.x
-                goal.point.y = self.camino.poses[self.control].pose.position.y
         try:
-            base_goal = self.listener.transformPoint('base_footprint', goal)
             if (self.camino != None):
+                if( self.control < len(self.camino.poses)):
+                    goal.point.x = self.camino.poses[self.control].pose.position.x
+                    goal.point.y = self.camino.poses[self.control].pose.position.y
+                    base_goal = self.listener.transformPoint('base_footprint', goal)
                 if (self.meta(base_goal)):
                     self.control+=1
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
@@ -63,25 +62,25 @@ class Turtlebot():
 
         # TODO: put the control law here
         linear = self.lineal_vel(base_goal)
-        angular = self.angular_vel(base_goal)
+        #angular = self.angular_vel(base_goal)
         alpha = math.atan2(base_goal.point.y, base_goal.point.x)
-        # alpha=math.fabs(alpha)
-        if (alpha > 0.1):
-            angular = alpha * 0.5
-            linear=0
+        #Si hay un angulo de más de 0.05rad de diferencia con el correcto
+        if (math.fabs(alpha) > 0.05):
+            angular = alpha * 0.3
         else:
             angular = 0
+            '''
         if (angular > self.max_angular_speed):
             angular = self.max_angular_speed
-            linear=0
-
-        rospy.loginfo('Lineal :')
-        rospy.loginfo(linear)
-        rospy.loginfo('Angular :')
-        rospy.loginfo(angular)
-
+            '''
         #Publica la velocidad angular y lineal del robot
+        if (self.camino != None):
+            rospy.loginfo('Objetivo : X ')
+            rospy.loginfo(self.camino.poses[self.control].pose.position.x)
+            rospy.loginfo('Objetivo : Y ')
+            rospy.loginfo(self.camino.poses[self.control].pose.position.y)
         self.publish(linear, angular)
+
 
     def publish(self,lin_vel, ang_vel):
     # Twist is a datatype for velocity
@@ -101,32 +100,22 @@ class Turtlebot():
     # sleep just makes sure TurtleBot receives the stop command prior to shutting down the script
         rospy.sleep(1)
 
-    '''
-    def lineal_vel(self, base_goal):
-        x = base_goal.point.x
-        y = base_goal.point.y
-        lineal = 0
-        dist = math.sqrt(pow(x, 2) + pow(y, 2))
-        alfa = 0.4
-        if (dist > self.distance_tolerance):
-            lineal = alfa * dist
-        else:
-            lineal = 0
-        if (lineal > self.max_linear_speed):
-            lineal = self.max_linear_speed
-        return lineal
-    '''
     def lineal_vel(self, base_goal):
         x = base_goal.point.x
         y = base_goal.point.y
         lineal=0
         dist= math.sqrt(pow(x,2)+pow(y,2))
-        alfa= 0.4
+        vel= 0.4
+        alpha = math.atan2(y, x)
+        rospy.loginfo('Diferencia de angulo:  ')
+        rospy.loginfo(math.fabs(alpha) )
         if(dist>self.distance_tolerance):
-            if(self.angular_vel(base_goal)>self.max_angular_speed-0.02):
+            if(math.fabs(alpha) > 0.75): #Si la diferencia del angulo con el objetivo es mayor de 0.75 hay que bajar la velocidad lineal
                 lineal=0.1
-            else:
-                lineal = alfa * dist
+            if(math.fabs(alpha) > 1.5):
+                lineal=0
+            if (math.fabs(alpha) < 0.75):
+                lineal = vel * dist
         else:
             lineal=0
         if(lineal>self.max_linear_speed):
@@ -152,7 +141,7 @@ class Turtlebot():
             x = base_goal.point.x
             y = base_goal.point.y
             dist = math.sqrt(pow(x, 2) + pow(y, 2))
-            if(dist<0.1):
+            if(dist<self.distance_tolerance):
                 return 1
             else:
                 return 0
