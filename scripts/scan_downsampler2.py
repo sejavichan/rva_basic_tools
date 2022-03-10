@@ -9,7 +9,7 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 
-class ScanDownsampler:
+class ScanDownsampler2:
     def __init__(self):
         self.n = rospy.get_param("~n", default=5)
         self.max_angle=0.5
@@ -72,10 +72,13 @@ if __name__ == '__main__':
         rospy.init_node('ScanDownsampler', anonymous=False)
 
         # Instantiate downsampler
-        ds=ScanDownsampler()
+        ds=ScanDownsampler2()
 
 	    # Log initialization and spin
         rospy.loginfo("Scan Downsampler starting. N = %d", ds.n)
         rospy.spin()
+        r = rospy.Rate(10);
+        '''while not rospy.is_shutdown():
+            r.sleep()'''
     except:
         rospy.loginfo("ScanDownsampler node terminated.")

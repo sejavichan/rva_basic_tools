@@ -22,7 +22,7 @@ class Turtlebot():
 
     # Create a publisher which can "talk" to TurtleBot and tell it to move
         # Tip: You may need to change cmd_vel_mux/input/navi to /cmd_vel if you're not using TurtleBot2
-        self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+        self.cmd_vel = rospy.Publisher('cmd_vel_coll', Twist, queue_size=10)
         self.sub = rospy.Subscriber('/path', Path, self.callback)
         self.listener = tf.TransformListener()
         self.max_linear_speed = rospy.get_param('~max_linear_speed')
@@ -66,13 +66,13 @@ class Turtlebot():
         # TODO: put the control law here
         linear = self.lineal_vel(base_goal)
         angular = self.angular_vel(base_goal)
-        
         #Publica la velocidad angular y lineal del robot
         if (self.camino != None):
             rospy.loginfo('Objetivo : X ')
             rospy.loginfo(self.camino.poses[self.control].pose.position.x)
             rospy.loginfo('Objetivo : Y ')
             rospy.loginfo(self.camino.poses[self.control].pose.position.y)
+        rospy.loginfo('Publica lineal: %f Angular: %f', linear, angular)
         self.publish(linear, angular)
 
 
