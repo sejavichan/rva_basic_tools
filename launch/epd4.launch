@@ -2,14 +2,13 @@
 	<arg name="path_file" default="path"/>
 	<rosparam command="delete" param="/path" />
 	<rosparam command="load" file="$(find rva_basic_tools)/test/$(arg path_file).yaml" />
-	<node pkg="rva_basic_tools" type="pathPublisher.py" name="path_publisher" output="screen"/>
-	<node pkg="rviz" type="rviz" name="rviz"/> 
-	<node pkg="rva_basic_tools" type="controlGoal.py" name="control" output="screen">
+	<node pkg="rva_basic_tools" type="pathPublisher.py" name="path_publisher"/>
+	<node pkg="rva_basic_tools" type="scan_downsampler2.py" name="down" output="screen"></node>
+	<!-- <node pkg="rviz" type="rviz" name="rviz"/> -->
+	<!-- <node pkg="rva_basic_tools" type="call_avoidance.py" name="control" output="screen"> 
 		<param name="max_linear_speed" value="0.6"/>
-		<!-- <param name="xgoal" value="0.0"/> -->
-		<!-- <param name="ygoal" value="0.0"/> -->
 		<param name="max_angular_speed" value="0.2"/>
 		<param name="distance_tolerance" value="0.1"/>
-	</node>
-	
+	</node>	
+    -->
 </launch>
