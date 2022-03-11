@@ -4,11 +4,11 @@
 	<rosparam command="load" file="$(find rva_basic_tools)/test/$(arg path_file).yaml" />
 	<node pkg="rva_basic_tools" type="pathPublisher.py" name="path_publisher"/>
 	<node pkg="rva_basic_tools" type="scan_downsampler2.py" name="down" output="screen"/>
-	<node pkg="rva_basic_tools" type="coll_avoidance.py" name="coll" output="screen" />
+	<node pkg="rva_basic_tools" type="coll_avoidance2.py" name="coll" output="screen" />
 	<!-- <node pkg="rviz" type="rviz" name="rviz"/> -->
 	<node pkg="rva_basic_tools" type="controlGoal.py" name="control" >
-		<param name="max_linear_speed" value="0.4"/>
-		<param name="max_angular_speed" value="0.2"/>
+		<param name="max_linear_speed" value="0.3"/>
+		<param name="max_angular_speed" value="0.1"/>
 		<param name="distance_tolerance" value="0.1"/>
 	</node>
 </launch>
