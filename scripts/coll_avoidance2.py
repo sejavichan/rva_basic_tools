@@ -31,7 +31,7 @@ class Coll_avoidance2:
         enc=False
         puntos=self.marker
         while(i<len(puntos) and not enc):
-            if(math.fabs(puntos[i].x)<self.coll_distance and math.fabs(puntos[i].y)<0.5):
+            if(math.fabs(puntos[i].x)<self.coll_distance and math.fabs(puntos[i].y)<0.3):
                 enc=True
                 #x=puntos[i].x
                 #y=puntos[i].y
@@ -44,8 +44,9 @@ class Coll_avoidance2:
         enc=False
         puntos=self.marker
         while(i<len(puntos) and not enc):
-            if(math.fabs(puntos[i].x)<self.coll_distance+1 and math.fabs(puntos[i].y)>0.5):
+            if(math.fabs(puntos[i].x)<self.coll_distance and math.fabs(puntos[i].y)>0.3 and math.fabs(puntos[i].y)<1):
                 enc=True
+                rospy.loginfo('X: %f, Y: %f',puntos[i].x, puntos[i].y)
                 #x=puntos[i].x
                 #y=puntos[i].y
             else:
@@ -62,11 +63,11 @@ class Coll_avoidance2:
             else:
                 if(self.peligro()):
                     rospy.loginfo('PELIGRO!!!!!!!')
-                    angular=0.1
+                    angular=0.2
                     lin_vel=0
                 elif(self.peligro_lat()):
                     rospy.loginfo('PELIGRO LATTTT!!!!!!!')
-                    lin_vel=0.1
+                    lin_vel=0.2
                     angular=0
                 else:
                     rospy.loginfo('SEGUROO!!!!')
