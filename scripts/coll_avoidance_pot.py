@@ -17,7 +17,7 @@ class Coll_avoidance2:
         rospy.Subscriber('/down/marker', Marker, self.callback)
         self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
         self.vel=None
-        self.coll_distance=0.5
+        self.coll_distance=2
         self.marker=None
 
     def callback(self, mark):
@@ -26,38 +26,30 @@ class Coll_avoidance2:
     def vel(self, vel):
         self.vel=vel
 
-    def peligro(self):
+    def peligro(self,v_li,w):
         i = 0
         enc=False
         puntos=self.marker
-        orient=0
+        vx=v_li*math.cos(w)
+        vy=v_li*math.sin(w)
+        v=np.array([vx,vy])        
         while(i<len(puntos) and not enc):
-            if(math.fabs(puntos[i].x)<self.coll_distance and math.fabs(puntos[i].y)<0.3):
+            dist=math.sqrt(math.pow(puntos[i].x,2)+math.pow(puntos[i].y,2))
+            rospy.loginfo('LLEGO??')
+            if(math.fabs(dist)<self.coll_distance):
+                
+                v-=self.campo_pot(v,puntos[i])
                 enc=True
-                if(puntos[i].y<0):
-                    orient=-1
-                else:
-                    orient=1
             else:
                 i+=1
-        return enc,orient
-
-    def peligro_lat(self):
-        i = 0
-        enc=False
-        puntos=self.marker
-        orient=0
-        while(i<len(puntos) and not enc):
-            if(math.fabs(puntos[i].x)<self.coll_distance and math.fabs(puntos[i].y)>0.3 and math.fabs(puntos[i].y)<1):
-                enc=True
-                rospy.loginfo('X: %f, Y: %f',puntos[i].x, puntos[i].y)
-                if(puntos[i].y<0):
-                    orient=-1
-                else:
-                    orient=1
-            else:
-                i+=1
-        return enc,orient #,x,y
+        return enc,v
+    
+    def campo_pot(self,v, punto):
+        k=0.4
+        mod=math.sqrt(math.pow(punto.x,2)+math.pow(punto.y,2))
+        v_pot=k*(punto/mod)
+        return v_pot
+        
 
 
     def publish(self):
@@ -67,18 +59,11 @@ class Coll_avoidance2:
                 lin_vel = self.vel.linear.x
                 angular = self.vel.angular.z
             else:
-                enc,ori=self.peligro()
-                enc2,ori2=self.peligro_lat()
+                enc,v=self.peligro(self.vel.linear.x,self.vel.linear.y)
                 if(enc):
                     rospy.loginfo('PELIGRO!!!!!!!')
-                    #angular=0.4*-ori
-                    angular=0.4*ori
-                    lin_vel=0
-                elif(enc2):
-                    rospy.loginfo('PELIGRO LATTTT!!!!!!!')
-                    lin_vel=0.2
-                    #angular=0.1*ori2
-                    angular=0
+                    lin_vel=math.sqrt(math.pow(v.x,2)+math.pow(v.y,2))
+                    angular=math.atan2(v.y,v.x)
                 else:
                     rospy.loginfo('SEGUROO!!!!')
                     lin_vel = self.vel.linear.x
@@ -112,4 +97,4 @@ if __name__ == '__main__':
           r.sleep()
           
     except:
-        rospy.loginfo("Error coll_avoidance.")
+        rospy.loginfo("Error coll_avoidance_pot.")
