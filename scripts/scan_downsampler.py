@@ -11,7 +11,7 @@ from visualization_msgs.msg import Marker
 
 class ScanDownsampler:
     def __init__(self):
-        self.n = rospy.get_param("~n", default=8)
+        self.n = rospy.get_param("~n", default=5)
         self.scale = rospy.get_param("~scale", default=0.3)
         rospy.Subscriber("/scan", LaserScan, self.callback)
         self.marker_pub = rospy.Publisher("~marker", Marker, queue_size=10, latch=True)

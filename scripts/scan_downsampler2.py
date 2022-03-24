@@ -11,7 +11,7 @@ from visualization_msgs.msg import Marker
 
 class ScanDownsampler2:
     def __init__(self):
-        self.n = rospy.get_param("~n", default=8)
+        self.n = rospy.get_param("~n", default=5)
         self.max_angle=np.pi/2
         self.min_angle=-np.pi/2
         self.scale = rospy.get_param("~scale", default=0.3)
