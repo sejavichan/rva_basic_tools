@@ -20,7 +20,7 @@ class Coll_avoidance2:
         self.max_angular = rospy.get_param('~max_angular_speed')
         self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
         self.vel=None
-        self.coll_distance=0.6
+        self.coll_distance=1
         self.marker=None
 
 
@@ -51,10 +51,10 @@ class Coll_avoidance2:
         return enc, v, obst
     
     def campo_pot(self, punto):
-        k=0.5
+        k=0.7
         mod=math.sqrt(math.pow(punto.x,2)+math.pow(punto.y,2))
         punto_arr = np.array([punto.x, punto.y, 0.0])
-        v_pot=k*(punto_arr/mod)
+        v_pot=k*(punto_arr/math.pow(mod,2))
         return v_pot
         
 
@@ -71,7 +71,7 @@ class Coll_avoidance2:
                     rospy.loginfo('PELIGRO!!!!!!!')
                     lin_vel=math.sqrt(math.pow(v[0],2)+math.pow(v[1],2))
                     angular=math.atan2(v[1],v[0])
-                    angular -= math.pi/4
+                    ''' angular -= math.pi/4 '''
                     '''Alternativa
                     if(obstaculo.y>0):
                         angular+=math.pi/3.5
@@ -85,8 +85,10 @@ class Coll_avoidance2:
                             angular = self.max_angular
                         else:
                             angular = -self.max_angular
+                    '''
                     if (math.fabs(angular) > 0.2):
                         lin_vel = 0
+                    '''
                 else:
                     rospy.loginfo('SEGUROO!!!!')
                     lin_vel = self.vel.linear.x
@@ -112,7 +114,7 @@ if __name__ == '__main__':
     try:
         # initiliaze
         rospy.init_node('coll_avoidance', anonymous=False)
-        r = rospy.Rate(10);
+        r = rospy.Rate(10)
         # Instantiate downsampler
         ca = Coll_avoidance2()
         while not rospy.is_shutdown():
