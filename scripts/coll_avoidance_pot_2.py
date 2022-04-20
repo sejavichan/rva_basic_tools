@@ -66,7 +66,7 @@ class Coll_avoidance2:
                 lin_vel = self.vel.linear.x
                 angular = self.vel.angular.z
             else:
-                enc,v, obstaculo = self.peligro(self.vel.linear.x,self.vel.linear.y)
+                enc,v, obstaculo = self.peligro(self.vel.linear.x,self.vel.angular.z)
                 if(enc):
                     rospy.loginfo('PELIGRO!!!!!!!')
                     lin_vel=math.sqrt(math.pow(v[0],2)+math.pow(v[1],2))
