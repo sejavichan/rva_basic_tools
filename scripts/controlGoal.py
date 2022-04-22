@@ -15,7 +15,8 @@ class Turtlebot():
     def __init__(self):
 
         self.cmd_vel = rospy.Publisher('/cmd_vel_coll', Twist, queue_size=10)
-        rospy.Subscriber('/path', Path,self.callback)
+        #self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        rospy.Subscriber('/path', Path, self.callback)
         self.listener = tf.TransformListener()
         #Parametrizaciones
         self.max_linear = rospy.get_param('~max_linear_speed')
@@ -64,50 +65,44 @@ class Turtlebot():
         return vel
 
     def command(self):
-        goal = PointStamped()
-        base_goal = PointStamped()
-
-        goal.header.frame_id = "odom"  # rostopic echo /odom
-
-        goal.header.stamp = rospy.Time()
-
-        #goal.point.x = gx
-        #goal.point.y = gy
-        #goal.point.z = 0.0
-
-        if(self.camino != None): #Si existe camino para seguir
-            if(self.control < len(self.camino.poses)): #Si el numero de puntos recorridos (comienza en 0) es menor que el total de puntos
-                goal.point.x = self.camino.poses[self.control].pose.position.x
-                goal.point.y = self.camino.poses[self.control].pose.position.y
-                if(self.control == len(self.camino.poses)-1): #Si es el ultimo punto (punto destino)
-                    self.destino = True
-                    rospy.loginfo("Punto destino: X(%f) Y(%f)",goal.point.x,goal.point.y)
-                else:
-                    rospy.loginfo("Siguiente punto: X(%f) Y(%f)",goal.point.x,goal.point.y)
-            else: #Si se han recorrido todos los puntos
-                self.shutdown(self)
-
         try:
-            base_goal = self.listener.transformPoint('base_footprint', goal)  # Dame el goal en mi sistema
-            if(self.camino != None):
-                if(self.meta(base_goal)): #Si se ha llegado al punto
-                    self.control += 1     #Aumentamos la variable de puntos recorridos           
+            goal = PointStamped()
+            base_goal = PointStamped()
+
+            goal.header.frame_id = "odom"  # rostopic echo /odom
+
+            goal.header.stamp = rospy.Time()
+
+            if(self.camino != None): #Si existe camino para seguir
+                if(self.control < len(self.camino.poses)): #Si el numero de puntos recorridos (comienza en 0) es menor que el total de puntos
+                    goal.point.x = self.camino.poses[self.control].pose.position.x
+                    goal.point.y = self.camino.poses[self.control].pose.position.y
+                    if(self.control == len(self.camino.poses)-1): #Si es el ultimo punto (punto destino)
+                        self.destino = True
+                        rospy.loginfo("Punto destino: X(%f) Y(%f)",goal.point.x,goal.point.y)
+                    else:
+                        rospy.loginfo("Siguiente punto: X(%f) Y(%f)",goal.point.x,goal.point.y)
+                else: #Si se han recorrido todos los puntos
+                    self.shutdown(self)
+
+
+                base_goal = self.listener.transformPoint('base_footprint', goal)  # Dame el goal en mi sistema
+                if(self.camino != None):
+                    if(self.meta(base_goal)): #Si se ha llegado al punto
+                        self.control += 1     #Aumentamos la variable de puntos recorridos
+                if(abs(math.atan2(base_goal.point.y, base_goal.point.x)) > self.tolerancia_angulo): #Si la diferencia del angulo es mayor a max tolerancia angulo
+                    angular = self.angularVelParado(base_goal)     #Girar con vel constante
+                    #linear = 0 #Con velocidad linear 0
+                    linear = 0.05  # Con velocidad linear 0.1
+                else:      #Velocidad linear y angular relativa
+                    angular = self.angularVelMovimiento(base_goal)
+                    linear = self.linearVel(base_goal)
+                rospy.loginfo("Velocidad linear: (%f)", linear)
+                rospy.loginfo("Velocidad angular: (%f)", angular)
+                self.publish(linear, angular)
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             rospy.loginfo("Problem TF")
             return
-
-        # TODO: put the control law here
-        
-        if(abs(math.atan2(base_goal.point.y, base_goal.point.x)) > self.tolerancia_angulo): #Si la diferencia del angulo es mayor a max tolerancia angulo
-            angular = self.angularVelParado(base_goal)     #Girar con vel constante
-            linear = 0 #Con velocidad linear 0
-        else:      #Velocidad linear y angular relativa             
-            angular = self.angularVelMovimiento(base_goal)
-            linear = self.linearVel(base_goal)
-        rospy.loginfo("Velocidad linear: (%f)", linear)
-        rospy.loginfo("Velocidad angular: (%f)", angular)
-
-        self.publish(linear, angular)
 
 
     def publish(self, lin_vel, ang_vel):
@@ -159,15 +154,6 @@ if __name__ == '__main__':
         robot = Turtlebot()
         # What function to call when you ctrl + c
         rospy.on_shutdown(robot.shutdown)
-
-        #Si queremos pasar por parametro o consola el punto destino
-        #goalx = float(sys.argv[1])
-        #goaly = float(sys.argv[2])
-        #goalx = rospy.get_param('~goalx')
-        #goaly = rospy.get_param('~goaly')
-        #goalx = 0
-        #goaly = 0
-
 
         # TurtleBot will stop if we don't keep telling it to move.  How often should we tell it to move? 10 HZ
         r = rospy.Rate(10)

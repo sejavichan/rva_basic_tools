@@ -6,7 +6,7 @@
 		<param name="frame" value="odom"/>
 	</node>
 	<node pkg="rva_basic_tools" type="scan_downsampler.py" name="down" output="screen"/>
-	<!-- <node pkg="rva_basic_tools" type="coll_avoidance2.py" name="coll" /> -->
+	<!-- <node pkg="rva_basic_tools" type="coll_avoidance_bug.py" name="coll" /> -->
 	<node pkg="rva_basic_tools" type="coll_avoidance_pot_2.py" name="coll" output="screen">
 		<param name="max_linear_speed" value="0.2"/>
 		<param name="min_linear_speed" value="0.1"/>
