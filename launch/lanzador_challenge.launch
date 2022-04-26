@@ -7,31 +7,31 @@
 <!--		<param name="frame" value="odom"/>-->
 <!--	</node>-->
 	<arg name="path_file" default="path"/>
-	<arg name="goal_x" default="2"/>
-  	<arg name="goal_y" default="1.5"/>
+	<arg name="goal_x" default="-2"/>
+  	<arg name="goal_y" default="-1"/>
 	<rosparam command="delete" param="/path" />
 
-	<node pkg="pruebas" type="planner_node.py" name="planner" output="screen">
+	<node pkg="rva_basic_tools" type="planner_node.py" name="planner" output="screen">
     	<param name="goal/x" value="$(arg goal_x)" />
     	<param name="goal/y" value="$(arg goal_y)" />
     	<remap from="/goal_pose" to="/move_base_simple/goal"/>
   	</node>
 
-	<node pkg="pruebas" type="scan_downsampler.py" name="down" output="screen"/>
+	<node pkg="rva_basic_tools" type="scan_downsampler.py" name="down" output="screen"/>
 
 
-	<node pkg="pruebas" type="coll_avoidance_pot.py" name="coll" >
+	<node pkg="rva_basic_tools" type="coll_avoidance_pot.py" name="coll" >
 		<param name="max_linear_speed" value="0.4"/>
 		<param name="min_linear_speed" value="0.05"/>
 		<param name="max_angular_speed" value="1.2"/>
 	</node>
 
-	<node pkg="pruebas" type="controlGoal.py" name="control" output="screen">
+	<node pkg="rva_basic_tools" type="controlGoal.py" name="control" output="screen">
 		<param name="max_linear_speed" value="0.7"/>
 		<param name="min_linear_speed" value="0.3"/>
 		<param name="max_angular_speed" value="0.6"/>
 		<param name="tolerancia_angulo" value="0.3"/>
-		<param name="tolerancia_punto" value="0.5"/>
-		<param name="tolerancia_destino" value="0.1"/>
+		<param name="tolerancia_punto" value="0.8"/>
+		<param name="tolerancia_destino" value="0.2"/>
 	</node>
 </launch>
