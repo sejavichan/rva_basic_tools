@@ -6,9 +6,8 @@
 <!--	<node pkg="pruebas" type="pathPublisher.py" name="path_publisher">-->
 <!--		<param name="frame" value="odom"/>-->
 <!--	</node>-->
-	<arg name="path_file" default="path"/>
-	<arg name="goal_x" default="-2"/>
-  	<arg name="goal_y" default="-1"/>
+	<arg name="goal_x" default="1"/>
+  	<arg name="goal_y" default="1"/>
 	<rosparam command="delete" param="/path" />
 
 	<node pkg="rva_basic_tools" type="planner_node.py" name="planner" output="screen">

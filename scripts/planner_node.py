@@ -22,6 +22,7 @@ class Planner:
         self.base_frame_id = rospy.get_param("~base_frame_id", "base_footprint")
         self.global_frame_id = rospy.get_param("~global_frame_id", "map")
         self.listener = tf.TransformListener()
+        self.goalx=None
         
         # Get the position of the robot as the initial position
         self.initial_pos = None
@@ -44,9 +45,16 @@ class Planner:
 
         self.path_publisher = rospy.Publisher('/path', Path, queue_size=10, latch=True)
         rospy.Subscriber('costmap_2d/costmap/costmap', OccupancyGrid, self.map_callback)
+        rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.goal)
         rospy.Subscriber('goal_pose', PoseStamped, self.goal_callback) 
         self.listener = tf.TransformListener()
         self.init = False  # This flag would be raised in the map callback
+    
+    def goal(self, goal):
+        self.goalx = goal.pose.position.x
+        self.goaly = goal.pose.position.y
+        print(self.goalx) 
+        print(self.goaly)
 
     def map_callback(self, map):
         self.map = map

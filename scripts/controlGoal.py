@@ -69,7 +69,7 @@ class Turtlebot():
             goal = PointStamped()
             base_goal = PointStamped()
 
-            goal.header.frame_id = "odom"  # rostopic echo /odom
+            goal.header.frame_id = "map"  # rostopic echo /odom
 
             goal.header.stamp = rospy.Time()
 
