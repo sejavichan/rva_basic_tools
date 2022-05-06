@@ -97,9 +97,11 @@ class Planner:
         print("Note: you should get the current position and calculate the path")
 
     def calculate_path (self, ix, iy, gx, gy):
+        #Calculo con dijkstra
         # self.dijkstra = Dijkstra(self.map)
         # return self.dijkstra.planning(ix, iy, gx, gy)
-        self.astar = Astar(self.map)
+        #Calculo del camino con A*
+        self.astar = Astar(self.map) 
         return self.astar.planning(ix, iy, gx, gy)
   
         
