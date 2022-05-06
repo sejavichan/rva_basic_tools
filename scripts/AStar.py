@@ -143,9 +143,7 @@ class Astar:
 
             # expand search grid based on motion model
             for move_x, move_y, move_cost in self.motion:
-                # TODO: You could change the cost of the node to include a heuristic to the goal node
-                # This way, we can change from Djikstra to A* algorithm 
-                # Currently the cost of the node only takes into account the
+                # Le añadimos el calculo de la heurística
                 node = self.Node(current.x + move_x,
                                 current.y + move_y,
                                 current.gcost + move_cost, self.calculoHeurist(current.x + move_x, current.y + move_y, goal_node.x, goal_node.y) ,c_id)

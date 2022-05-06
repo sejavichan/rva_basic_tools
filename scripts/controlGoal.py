@@ -14,8 +14,8 @@ class Turtlebot():
 
     def __init__(self):
 
-        self.cmd_vel = rospy.Publisher('/cmd_vel_coll', Twist, queue_size=10)
-        #self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.cmd_vel = rospy.Publisher('/cmd_vel_coll', Twist, queue_size=10) #Para publicar en el topico que recogerá el collision_avoidance
+        #self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10) #Para publicar en el topico que mueve al robot
         rospy.Subscriber('/path', Path, self.callback)
         self.listener = tf.TransformListener()
         #Parametrizaciones

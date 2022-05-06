@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-
-# A basic tool that downsamples a radar scan by taking one point for each n
 import math
-
 import rospy
 import tf
 import numpy as np
@@ -15,13 +12,13 @@ class Coll_Avoidance_Pot:
     def __init__(self):
         rospy.Subscriber('/cmd_vel_coll', Twist, self.vel)
         rospy.Subscriber('/down/marker', Marker, self.callback)
+        self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+        self.vel=None
+        self.marker=None
         self.max_linear = rospy.get_param('~max_linear_speed')
         self.min_linear = rospy.get_param('~min_linear_speed')
         self.max_angular = rospy.get_param('~max_angular_speed')
         self.min_linear = rospy.get_param('~min_linear_speed')
-        self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-        self.vel=None
-        self.marker=None
         self.tolerancia_angulo = rospy.get_param('~tolerancia_angulo')
         self.tolerancia_obs = rospy.get_param('~tolerancia_obs')
         self.k = rospy.get_param('~k')
@@ -38,7 +35,7 @@ class Coll_Avoidance_Pot:
         v_pot=0
         for i in range(0, len(puntos)):
             dist = math.sqrt(math.pow(puntos[i].x, 2) + math.pow(puntos[i].y, 2))
-            if (dist < self.tolerancia_obs):
+            if (dist < self.tolerancia_obs): 
                 v_lin, v_ang = self.convert_esc(v)
                 if(dist<self.tol_dist_vel):
                      rospy.loginfo('Peligro!!!!!!!')
@@ -68,20 +65,20 @@ class Coll_Avoidance_Pot:
 
     def publish(self):
         move_cmd = Twist()
-        if(self.vel != None and self.marker != None):
+        if(self.vel != None and self.marker != None): #Mientras no reciva la velocidad del módulo de contron ni el markador que detecta los objetos no se mueve
             lin_vel = self.vel.linear.x
             angular = self.vel.angular.z
 
-            if (lin_vel > 0):
-                v = self.convert_vect(lin_vel, angular)
-                v = self.campo_pot(v)
-                lin_vel, angular = self.convert_esc(v)
+            if (lin_vel > 0): #La velocidad linear tiene que ser mayor a 0 ya que sino al convertirlo a vectorial los cálculos fallan
+                v = self.convert_vect(lin_vel, angular) #Pasamos la velocidad linear y angular a vectorial ya que se necesita para aplicar el campo potencial
+                v = self.campo_pot(v) #Le aplicamos el campo potencial
+                lin_vel, angular = self.convert_esc(v) #Volvemos a convertir a escalar la velocidad lineal y angular
+                #Limitamos velocidades máximas y mínimas
                 if(lin_vel>self.max_linear):
                     lin_vel=self.max_linear
                 if (lin_vel < self.min_linear):
                     lin_vel = self.min_linear
                 if(math.fabs(angular)>self.tolerancia_angulo):
-                    #lin_vel = 0.07
                     if(angular>0):
                         angular=self.max_angular
                     else:
