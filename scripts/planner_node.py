@@ -51,8 +51,9 @@ class Planner:
         self.init = False  # This flag would be raised in the map callback
     
     def goal(self, goal):
-        self.goalx = goal.pose.position.x
-        self.goaly = goal.pose.position.y
+        position = goal.pose.position
+        self.goalx = position.x
+        self.goaly = position.y
         print(self.goalx) 
         print(self.goaly)
 

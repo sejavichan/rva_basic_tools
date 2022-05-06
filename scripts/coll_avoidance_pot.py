@@ -22,10 +22,10 @@ class Coll_Avoidance_Pot:
         self.cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
         self.vel=None
         self.marker=None
-        self.tolerancia_angulo=0.3
-        self.tolerancia_obs=2
-        self.k=0.004
-        self.tol_dist_vel=0.4
+        self.tolerancia_angulo = rospy.get_param('~tolerancia_angulo')
+        self.tolerancia_obs = rospy.get_param('~tolerancia_obs')
+        self.k = rospy.get_param('~k')
+        self.tol_dist_vel = rospy.get_param('~tol_dist_vel')
 
     def callback(self, mark):
         self.marker = mark.points
