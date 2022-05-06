@@ -12,6 +12,7 @@ from geometry_msgs.msg import Point, PoseStamped, PointStamped
 from nav_msgs.msg import Path
 from nav_msgs.msg import OccupancyGrid
 from dijkstra import Dijkstra
+from AStar import Astar
 
 class Planner:
     def __init__(self):
@@ -96,8 +97,10 @@ class Planner:
         print("Note: you should get the current position and calculate the path")
 
     def calculate_path (self, ix, iy, gx, gy):
-        self.dijkstra = Dijkstra(self.map)
-        return self.dijkstra.planning(ix, iy, gx, gy)
+        # self.dijkstra = Dijkstra(self.map)
+        # return self.dijkstra.planning(ix, iy, gx, gy)
+        self.astar = Astar(self.map)
+        return self.astar.planning(ix, iy, gx, gy)
   
         
 if __name__ == '__main__':
