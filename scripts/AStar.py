@@ -62,7 +62,7 @@ class Astar:
             plt.grid(True)
             # plt.axis("equal")
   
-
+    #Modificamos la definicion de Node para que se le añada la heuristica
     class Node:
         def __init__(self, x, y, gcost, hcost, parent):
             self.x = x  # index of grid
@@ -158,16 +158,17 @@ class Astar:
                 if n_id not in open_set:
                     open_set[n_id] = node  # Discover a new node
                 else:
-                    if open_set[n_id].fcost >= node.fcost:
+                    if open_set[n_id].fcost >= node.fcost: #Si el coste total es menor del nuevo nodo se queda con el nuevo
                         # This path is the best until now. record it!
                         open_set[n_id] = node
 
         rx, ry = self.calc_final_path(goal_node, closed_set)
 
         return rx, ry
-    
+
+    #Funcion que define la heuristica
     def calculoHeurist(self, x, y, gx, gy):
-        return abs((x-gx)+(y-gy))
+        return abs(x-gx)+abs(y-gy)
         
 
 

@@ -34,18 +34,17 @@ class Coll_Avoidance_Pot:
         puntos=self.marker
         v_pot=0
         for i in range(0, len(puntos)):
-            dist = math.sqrt(math.pow(puntos[i].x, 2) + math.pow(puntos[i].y, 2))
+            dist = math.sqrt(math.pow(puntos[i].x, 2) + math.pow(puntos[i].y, 2)) #La distancia a la que se encuentra el robot del obstaculo
             if (dist < self.tolerancia_obs): 
                 v_lin, v_ang = self.convert_esc(v)
-                if(dist<self.tol_dist_vel):
-                     rospy.loginfo('Peligro!!!!!!!')
-                     v_lin = v_lin*dist
-                     v_ang += v_ang/dist
+                if(dist<self.tol_dist_vel): #Si esta más cerca que la distancia de tolerancia la velocidad lineal disminuirá conforme se acerque al obstaculo
+                     v_lin = v_lin*dist 
+                     v_ang += v_ang/dist #Cuanto mas cerca este del obstaculo aumenta la velocidad angular
                      v = self.convert_vect(v_lin,v_ang)
                 punto=puntos[i]
                 mod=math.sqrt(math.pow(punto.x,2)+math.pow(punto.y,2))
-                punto_arr = np.array([punto.x, punto.y, 0.0])
-                v_pot += self.k*(punto_arr/math.pow(mod,2))
+                punto_arr = np.array([punto.x, punto.y, 0.0]) #Dejamos el punto al obstaculo como vector para el cálculo posterior
+                v_pot += self.k*(punto_arr/math.pow(mod,2)) #Formula del campo potencial
                 #v_pot += self.k * (punto_arr / mod)
         v -= v_pot
         return v
@@ -65,7 +64,7 @@ class Coll_Avoidance_Pot:
 
     def publish(self):
         move_cmd = Twist()
-        if(self.vel != None and self.marker != None): #Mientras no reciva la velocidad del módulo de contron ni el markador que detecta los objetos no se mueve
+        if(self.vel != None and self.marker != None): #Mientras no reciba la velocidad del módulo de control ni el marcador que detecta los objetos no se mueve
             lin_vel = self.vel.linear.x
             angular = self.vel.angular.z
 

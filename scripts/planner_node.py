@@ -100,6 +100,7 @@ class Planner:
         #Calculo con dijkstra
         # self.dijkstra = Dijkstra(self.map)
         # return self.dijkstra.planning(ix, iy, gx, gy)
+
         #Calculo del camino con A*
         self.astar = Astar(self.map) 
         return self.astar.planning(ix, iy, gx, gy)
