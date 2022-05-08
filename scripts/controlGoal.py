@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import sys
 import math
 import rospy
@@ -13,7 +12,6 @@ from nav_msgs.msg import Path
 class Turtlebot():
 
     def __init__(self):
-
         self.cmd_vel = rospy.Publisher('/cmd_vel_coll', Twist, queue_size=10) #Para publicar en el topico que recogerá el collision_avoidance
         #self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10) #Para publicar en el topico que mueve al robot
         rospy.Subscriber('/path', Path, self.callback)
@@ -103,7 +101,6 @@ class Turtlebot():
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             rospy.loginfo("Problem TF")
             return
-
 
     def publish(self, lin_vel, ang_vel):
         # Twist is a datatype for velocity
