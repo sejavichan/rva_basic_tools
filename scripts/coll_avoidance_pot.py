@@ -45,6 +45,7 @@ class Coll_Avoidance_Pot:
                 mod=math.sqrt(math.pow(punto.x,2)+math.pow(punto.y,2))
                 punto_arr = np.array([punto.x, punto.y, 0.0]) #Dejamos el punto al obstaculo como vector para el cálculo posterior
                 v_pot += self.k*(punto_arr/math.pow(mod,2)) #Formula del campo potencial
+                #v_pot += self.k*(punto_arr/(math.pow(mod,2)/dist))
                 #v_pot += self.k * (punto_arr / mod)
         v -= v_pot
         return v

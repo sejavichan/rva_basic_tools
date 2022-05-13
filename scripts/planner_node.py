@@ -24,6 +24,7 @@ class Planner:
         self.global_frame_id = rospy.get_param("~global_frame_id", "map")
         self.listener = tf.TransformListener()
         self.goalx=None
+        self.algorit=self.goaly = rospy.get_param('~algorit')
         
         # Get the position of the robot as the initial position
         self.initial_pos = None
@@ -97,13 +98,14 @@ class Planner:
         print("Note: you should get the current position and calculate the path")
 
     def calculate_path (self, ix, iy, gx, gy):
-        #Calculo con dijkstra
-        # self.dijkstra = Dijkstra(self.map)
-        # return self.dijkstra.planning(ix, iy, gx, gy)
-
-        #Calculo del camino con A*
-        self.astar = Astar(self.map) 
-        return self.astar.planning(ix, iy, gx, gy)
+        if self.algorit==1:
+            #Calculo con dijkstra
+            self.dijkstra = Dijkstra(self.map)
+            return self.dijkstra.planning(ix, iy, gx, gy)
+        else:
+            #Calculo del camino con A*
+            self.astar = Astar(self.map) 
+            return self.astar.planning(ix, iy, gx, gy)
   
         
 if __name__ == '__main__':
